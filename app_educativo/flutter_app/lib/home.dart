@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'num.dart';
 import 'letras.dart';
+import 'sobre.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -42,7 +43,22 @@ class _Home extends State<Home> {
                   ),
               ),
               _buttonNum(),
-              _buttonLet()
+              _buttonLet(),
+              TextButton(
+                  onPressed: () {
+                    print('apertou');
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (BuildContext) => Sobre()));
+                  },
+                  child: Text(
+                      "Sobre o App",
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Colors.deepOrange,
+                        fontSize: 20,
+                      )
+                  )
+              )
               ]
         )
     );
