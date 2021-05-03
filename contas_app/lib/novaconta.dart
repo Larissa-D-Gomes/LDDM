@@ -13,6 +13,7 @@ class _NovaConta extends State<NovaConta> {
   TextEditingController _controllerSenha = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool valid = false;
+  String ok = "";
 
   String erro = "";
 
@@ -83,14 +84,28 @@ class _NovaConta extends State<NovaConta> {
                     bool formOk = _formKey.currentState.validate();
 
                     if (!formOk || p  ) {
+                      setState(() {
+                        ok = "";
+                      });
                       return;
                     } else {
+                      setState(() {
+                        ok = "Conta cadastrada com sucesso!";
+                      });
                       DB.salvar_conta(
                           _controllerLogin.text, _controllerSenha.text);
                     }
                     print("Login " + _controllerLogin.text);
                     print("Senha " + _controllerSenha.text);
                   }),
+            ),
+            Text(
+              "\n\t\t\t " + ok,
+              //textAlign: Texcenter,
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 20,
+              ),
             ),
           ],
         ),
