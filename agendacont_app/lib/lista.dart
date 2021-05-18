@@ -1,8 +1,6 @@
 import 'package:agendacont_app/criarcont.dart';
-import 'package:agendacont_app/novaconta.dart';
+import 'package:agendacont_app/editcont.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
-import 'DBC.dart';
 import 'conta.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,48 +17,9 @@ class Lista extends StatefulWidget {
 }
 
 class _Lista extends State<Lista> {
-  TextEditingController _controllerConta = TextEditingController();
-  TextEditingController _controllerValor = TextEditingController();
-  TextEditingController _controllerData = TextEditingController();
-  List<Conta> r = new List();
+  TextEditingController _controllerPesquisa = TextEditingController();
+  List<DocumentSnapshot> r = null;
   bool _loading = true;
-
-  final List<Tab> myTabs = <Tab>[
-    Tab(text: 'LEFT'),
-    Tab(text: 'RIGHT'),
-  ];
-
-  TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    //_tabController =  TabController( length: myTabs.length);
-    print("entrou");
-    /*DBC.recuperar_tudo(widget.idUser).then((list) {
-      setState(() {
-        r = list;
-        print(list);
-        this._loading = false;
-      });
-    });*/
-  }
-
-  limpartext() {
-    _controllerConta.text = "";
-    _controllerValor.text = "";
-    _controllerData.text = "";
-  }
-
-  reloadlist() async {
-    /* DBC.recuperar_tudo(widget.idUser).then((list) {
-      setState(() {
-        r = list;
-        print(list);
-        this._loading = false;
-      });
-    });*/
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +53,7 @@ class _Lista extends State<Lista> {
           ),
           body: TabBarView(children: [
             body(snap),
-            aux(),
+            pesquisa(snap),
           ]),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           floatingActionButton: FloatingActionButton(
@@ -103,14 +62,65 @@ class _Lista extends State<Lista> {
               child: Icon(Icons.add),
               onPressed: () {
                 print("Botão pressionado!");
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (BuildContext) => NovoCont(widget.idUser)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext) => NovoCont(widget.idUser)));
               }),
         ));
   }
 
-  aux() {
-    return Text("a");
+  pesquisa(var snap) {
+    if (r == null || r.length == 0)
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+              margin: EdgeInsets.only(left: 40),
+              width: 170,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                      ),
+                      decoration: InputDecoration(
+                          labelText: "Pesquisar:", hintText: "Digite o nome"),
+                      controller: _controllerPesquisa,
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(left: 5, top: 20),
+                    height: 30,
+                    width: 50,
+                    // ignore: deprecated_member_use
+                    child: RaisedButton(
+                      color: Colors.deepOrange,
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.white,
+                        size: 15.0,
+                      ),
+                      onPressed: () {
+                        pesquisar();
+                      },
+                    ),
+                  ),
+                ],
+              )),
+        ],
+      );
+    else
+      return ListView.builder(
+        itemCount: r.length,
+        itemBuilder: (context, index) {
+          var item = r[index];
+          return  Text(item['nome']);
+        },
+      );
+    /*return */
   }
 
   body(var snap) {
@@ -143,88 +153,120 @@ class _Lista extends State<Lista> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                child:
-                                TextButton(
-                                onPressed: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                            title: Text(item['nome']),
-                                            content: Container(
-                                              height: 250,
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                    child: Text(
-                                                      "Endereço: \n" +
-                                                          item['endereco'] + "\n",
+                                child: TextButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                              title: Text(item['nome']),
+                                              content: Container(
+                                                height: 250,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Endereço: ",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      child: Text(
+                                                        item['endereco'],
+                                                        style: TextStyle(
+                                                          color:
+                                                              Colors.blueGrey,
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Text(
+                                                      "CEP: ",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      item['CEP'],
                                                       style: TextStyle(
                                                         color: Colors.blueGrey,
                                                         fontSize: 15,
                                                       ),
                                                     ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  Text(
-                                                    "CEP:  \n" + item['CEP'] + "\n",
-                                                    style: TextStyle(
-                                                      color: Colors.blueGrey,
-                                                      fontSize: 15,
+                                                    SizedBox(
+                                                      height: 15,
                                                     ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  Text(
-                                                    "Telefone: \n" +
-                                                        item['telefone'] + "\n",
-                                                    style: TextStyle(
-                                                      color: Colors.blueGrey,
-                                                      fontSize: 15,
+                                                    Text(
+                                                      "Telefone: ",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  Text(
-                                                    "E-mail: \n" + item['email'] + "\n",
-                                                    style: TextStyle(
-                                                      color: Colors.blueGrey,
-                                                      fontSize: 15,
+                                                    Text(
+                                                      item['telefone'],
+                                                      style: TextStyle(
+                                                        color: Colors.blueGrey,
+                                                        fontSize: 15,
+                                                      ),
                                                     ),
-                                                  ),
-
-                                                ],
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Text(
+                                                      "E-mail: ",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      item['email'],
+                                                      style: TextStyle(
+                                                        color: Colors.blueGrey,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text("Fechar",
-                                                  ))
-
-
-                                            ]);
-                                      });
-                                },
-                                child: Text(
-                                  item['nome'],
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 20,
-                                    decoration: TextDecoration.underline,
+                                              actions: <Widget>[
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text(
+                                                      "Fechar",
+                                                    ))
+                                              ]);
+                                        });
+                                  },
+                                  child: Text(
+                                    item['nome'],
+                                    style: TextStyle(
+                                      color: Colors.black87,
+                                      fontSize: 20,
+                                      decoration: TextDecoration.underline,
+                                    ),
                                   ),
                                 ),
-                              ),
                               ),
                             ]),
                         Spacer(),
@@ -243,7 +285,12 @@ class _Lista extends State<Lista> {
                                     color: Colors.white,
                                     size: 20.0,
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (BuildContext) => EditCont(item)));
+                                  },
                                 ),
                               ),
                               Container(
@@ -259,7 +306,7 @@ class _Lista extends State<Lista> {
                                     size: 20.0,
                                   ),
                                   onPressed: () async {
-                                   item.reference.update({'excluido': true});
+                                    item.reference.update({'excluido': true});
                                   },
                                 ),
                               ),
@@ -273,7 +320,19 @@ class _Lista extends State<Lista> {
     );
   }
 
-  update(int x, Conta c) async {
-    // DBC.update(r[x].id, c);
+  pesquisar() async {
+    print(_controllerPesquisa.text);
+    var aux = (await FirebaseFirestore.instance
+            .collection("contato")
+            .where("nome", isEqualTo: _controllerPesquisa.text)
+            .get())
+        .docs;
+
+    setState(() {
+      r = aux;
+
+      this._loading = false;
+    });
+    print(r.length);
   }
 }
