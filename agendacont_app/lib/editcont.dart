@@ -150,7 +150,6 @@ class _EditCont extends State<EditCont> {
                         'nome': _controllerNome.text,
                         'CEP': _controllerCEP.text,
                         'endereco': _controllerEndereco.text,
-                        'excluido': false,
                         'telefone': _controllerTelefone.text,
 
                       });
