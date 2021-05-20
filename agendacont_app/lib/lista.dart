@@ -1,7 +1,6 @@
 import 'package:agendacont_app/criarcont.dart';
 import 'package:agendacont_app/editcont.dart';
 import 'package:flutter/material.dart';
-import 'conta.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
