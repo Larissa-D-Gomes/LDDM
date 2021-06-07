@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "343005885916",
+    "project_id": "contatos-13b9e",
+    "storage_bucket": "contatos-13b9e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:343005885916:android:bcacfe2d4f19173a2c4b19",
+        "android_client_info": {
+          "package_name": "com.example.agendacont_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "343005885916-nj8a65l7tei3c6cfsq77ibtbtjosr56d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNsZ9V61La6dohFHGz2FG7XRyk6vhxhzI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "343005885916-nj8a65l7tei3c6cfsq77ibtbtjosr56d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
