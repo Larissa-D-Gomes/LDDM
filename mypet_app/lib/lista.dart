@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:agendacont_app/Event.dart';
@@ -31,6 +33,9 @@ class _Lista extends State<Lista> {
   TextEditingController _controllerNome = TextEditingController();
   TextEditingController _controllerUltima = TextEditingController();
   TextEditingController _controllerProxima = TextEditingController();
+  Position _currentPosition;
+  Position _currentAddress;
+  Position _startAddress;
 
   static final CameraPosition _kInitialPosition =
       CameraPosition(target: _kMapCenter, zoom: 11.0, tilt: 0, bearing: 0);
@@ -43,6 +48,7 @@ class _Lista extends State<Lista> {
     selectedEventsU[selectedDay] = [];
     selectedEventsP = {};
     selectedEventsP[selectedDay] = [];
+    //_getCurrentLocation();
     super.initState();
   }
 
@@ -446,6 +452,31 @@ class _Lista extends State<Lista> {
         .loadString('assets/map_style.json');
     _controller.setMapStyle(value);
   }
+
+  _getCurrentLocation() async {
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((Position position) async {
+      setState(() {
+        // Store the position in the variable
+        _currentPosition = position;
+
+        print('CURRENT POS: $_currentPosition');
+
+        // For moving the camera to current location
+        _controller.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(position.latitude, position.longitude),
+              zoom: 18.0,
+            ),
+          ),
+        );
+      });
+          }).catchError((e) {
+      print(e);
+    });
+  }
+
 
   body(var snap) {
     return StreamBuilder(
